@@ -4,8 +4,11 @@ const user = require("./routes/user");
 const pet = require("./routes/pet");
 const appointment = require("./routes/appointment");
 const state = require("./routes/state");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
+
 
 app.use("/assets", express.static("assets"));
 
