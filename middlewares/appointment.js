@@ -1,0 +1,29 @@
+const db = require("../util/database");
+
+const isOwner = async (req, res, next) => {
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id: Number(req.params.id),
+    },
+    include: {
+      Pet: true,
+    }
+  });
+
+  if (!appointment) {
+    return res.status(404).json({
+      error: "appointment not found.",
+    });
+  }
+
+  if (appointment.Pet.userId === req.user.id && req.user.role === "USER") {
+    req.appointment = appointment;
+    next();
+  } else {
+    res.status(401).json({
+      message: "You don't have permission to access this appointment"
+    });
+  }
+}
+
+module.exports.isOwner = isOwner;
