@@ -57,6 +57,13 @@ router.put("/:id/:type", isLogin, isOwner, async (req, res) => {
     return res.status(400).json({ error: err.errors });
   }
 
+  const lang = {
+    APPROVED: "อนุมัติคำขอ",
+    REJECTED: "ปฏิเสธคำขอ",
+    PENDING: "รอการตรวจสอบ",
+    CLOSED: "ปิดการนัดหมาย",
+  }
+
   try {
     const appointmentData = await db.appointment.update({
       where: {
@@ -64,6 +71,11 @@ router.put("/:id/:type", isLogin, isOwner, async (req, res) => {
       },
       data: {
         status: data,
+        state: {
+          create: {
+            name: lang[data],
+          }
+        }
       },
     });
 

@@ -158,6 +158,16 @@ router.post("/:id/appointment", isLogin, isOwner, async (req, res) => {
             id: Number(req.params.id),
           },
         },
+        state: {
+          createMany: {
+            data: [{
+              name: "ส่งคำขอจอง"
+            },
+          {
+            name : "รอการตรวจสอบ"
+          }]
+          }
+        }
       },
     });
 
