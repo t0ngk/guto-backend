@@ -158,6 +158,56 @@ router.get("/me", isLogin, async (req, res) => {
 
 let profileUpload = multer({ storage: storage }).single("profile");
 
+router.put("/:id/role/:role", isLogin, isAdmin, async (req, res) => {
+  const { id, role } = req.params;
+
+  try {
+    var trustData = z.object({
+      role: z.enum(["ADMIN", "USER"]),
+    }).parse({ role: role });
+  } catch (error) {
+    return res.status(400).json({
+      error: error.errors,
+    });
+  }
+
+  const getUser = await db.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (!getUser) {
+    return res.status(400).json({
+      error: "user not found",
+    });
+  }
+
+  const user = await db.user.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      ...trustData
+    },
+    select: {
+      id: true,
+      email: true,
+      fname: true,
+      lname: true,
+      phone: true,
+      address: true,
+      profileImg: true,
+    },
+  });
+
+  return res.status(200).json({
+    message: "user updated",
+    data: user,
+  });
+
+});
+
 //upload profile image
 router.post("/profile", isLogin, profileUpload, async (req, res) => {
   const user = await db.user.update({
