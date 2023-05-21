@@ -128,6 +128,25 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/", isLogin ,isAdmin, async (req, res) => {
+  const users = await db.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      fname: true,
+      lname: true,
+      phone: true,
+      address: true,
+      profileImg: true,
+    },
+  });
+
+  res.status(200).json({
+    message: "users",
+    data: users,
+  });
+});
+
 //get user
 router.get("/me", isLogin, async (req, res) => {
   delete req.user.password;
