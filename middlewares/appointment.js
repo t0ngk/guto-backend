@@ -16,14 +16,23 @@ const isOwner = async (req, res, next) => {
     });
   }
 
-  if (appointment.Pet.userId === req.user.id && req.user.role === "USER") {
-    req.appointment = appointment;
-    next();
-  } else {
-    res.status(401).json({
-      message: "You don't have permission to access this appointment"
+  // if (appointment.Pet.userId === req.user.id && req.user.role === "USER") {
+  //   req.appointment = appointment;
+  //   next();
+  // } else {
+  //   res.status(401).json({
+  //     message: "You don't have permission to access this appointment"
+  //   });
+  // }
+
+  if (appointment.Pet.userId !== req.user.id && req.user.role !== "ADMIN") {
+    return res.status(403).json({
+      error: "forbidden",
     });
   }
+
+  req.appointment = appointment;
+  next();
 }
 
 module.exports.isOwner = isOwner;
