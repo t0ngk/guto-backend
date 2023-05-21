@@ -137,8 +137,10 @@ router.get("/", isLogin ,isAdmin, async (req, res) => {
       lname: true,
       phone: true,
       address: true,
-      profileImg: true,
     },
+    include: {
+      profileImg: true,
+    }
   });
 
   res.status(200).json({
@@ -197,8 +199,10 @@ router.put("/:id/role/:role", isLogin, isAdmin, async (req, res) => {
       lname: true,
       phone: true,
       address: true,
-      profileImg: true,
     },
+    include: {
+      profileImg: true,
+    }
   });
 
   return res.status(200).json({
