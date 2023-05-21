@@ -289,6 +289,10 @@ router.put("/", isLogin, async (req, res) => {
       trustData.password = await bcrypt.hash(trustData.password, 10);
       delete trustData.oldpassword;
       delete trustData.confirmPassword;
+    } else {
+      delete trustData.oldpassword;
+      delete trustData.confirmPassword;
+      delete trustData.password;
     }
 
     const user = await db.user.update({
