@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../util/database");
 const { isLogin, isAdmin } = require("../middlewares/user");
 const { isOwner } = require("../middlewares/appointment");
-const { appointmentSchema } = require("../util/schema");
+const { appointmentSchema, stateSchema } = require("../util/schema");
 const { z } = require("zod");
 
 router.get("/", isLogin, isAdmin, async (req, res) => {
@@ -94,18 +94,85 @@ router.post("/:id/state", isLogin, isOwner, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
-  console.log(data);
+  if (data.date) {
+    data.date = new Date(data.date);
+  }
+  
+  const stateSchemaOption = stateSchema.partial().required({
+    name: true,
+  });
+
+  try {
+    var trustData = stateSchemaOption.parse(data);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ error: err.errors });
+  }
 
   try {
     const stateData = await db.state.create({
       data: {
-        ...data,
+        ...trustData,
         Appointment: {
           connect: {
             id: Number(id),
           },
         },
       },
+    });
+    return res.status(200).json({ message: "success", data: stateData });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "internal server error" });
+  }
+});
+
+router.post("/:id/state/next", isLogin, isOwner, async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  if (data.date) {
+    data.date = new Date(data.date);
+  }
+
+  const stateSchemaOption = stateSchema.extend({
+    time: z.string().max(255),
+  }).partial().required({
+    name: true,
+  });
+
+  try {
+    var trustData = stateSchemaOption.parse(data);
+    var trustTime = {date: trustData.date};
+    if (trustData.time) {
+      trustTime.time = trustData.time;
+      delete trustData.time;
+    }
+    console.log(trustData);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ error: err.errors });
+  }
+
+  try {
+    const stateData = await db.state.create({
+      data: {
+        ...trustData,
+        Appointment: {
+          connect: {
+            id: Number(id),
+          },
+        },
+      },
+    });
+
+    await db.appointment.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        ...trustTime
+      }
     });
     return res.status(200).json({ message: "success", data: stateData });
   } catch (err) {
