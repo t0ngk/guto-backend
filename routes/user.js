@@ -137,10 +137,8 @@ router.get("/", isLogin ,isAdmin, async (req, res) => {
       lname: true,
       phone: true,
       address: true,
-    },
-    include: {
       profileImg: true,
-    }
+    },
   });
 
   res.status(200).json({
@@ -199,10 +197,8 @@ router.put("/:id/role/:role", isLogin, isAdmin, async (req, res) => {
       lname: true,
       phone: true,
       address: true,
-    },
-    include: {
       profileImg: true,
-    }
+    },
   });
 
   return res.status(200).json({
@@ -356,6 +352,15 @@ router.get("/:id", isLogin, isAdmin, async (req, res) => {
     const user = await db.user.findUnique({
       where: {
         id: Number(req.params.id),
+      },
+      select: {
+        id: true,
+        email: true,
+        fname: true,
+        lname: true,
+        phone: true,
+        address: true,
+        profileImg: true,
       },
     });
 
