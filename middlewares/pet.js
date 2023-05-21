@@ -13,7 +13,7 @@ async function isOwner(req, res, next) {
     });
   }
 
-  if (pet.userId !== req.user.id && req.user.role !== "ADMIN") {
+  if (pet?.userId !== req.user.id && req.user.role !== "ADMIN") {
     return res.status(403).json({
       error: "forbidden",
     });

@@ -158,7 +158,6 @@ router.post("/:id/state/next", isLogin, isOwner, async (req, res) => {
     var trustTime = {date: trustData.date};
     if (trustData.time) {
       trustTime.time = trustData.time;
-      delete trustData.time;
     }
     console.log(trustData);
   } catch (err) {

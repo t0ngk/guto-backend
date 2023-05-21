@@ -10,6 +10,8 @@ const appointmentSchema = z.object({
 const stateSchema = z.object({
   name: z.string().max(255),
   date: z.date(),
+  time: z.string().max(255),
+  type: z.enum(["success", "warning", "error", "info"]),
 });
 
 const petSchema = z.object({

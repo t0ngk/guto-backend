@@ -49,6 +49,8 @@ model State {
   id            Int          @id @default(autoincrement())
   name          String
   date          DateTime     @default(now())
+  type          timeLineType @default(info)
+  time          String?
   Appointment   Appointment? @relation(fields: [appointmentId], references: [id])
   appointmentId Int?
 }
@@ -63,4 +65,11 @@ enum Status {
   APPROVED
   REJECTED
   CLOSED
+}
+
+enum timeLineType {
+  success
+  error
+  info
+  warning
 }
