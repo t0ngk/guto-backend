@@ -12,5 +12,10 @@ const stateSchema = z.object({
   date: z.date(),
 });
 
+const petSchema = z.object({
+  name: z.string().max(255),
+});
+
 module.exports.appointmentSchema = appointmentSchema;
 module.exports.stateSchema = stateSchema;
+module.exports.petSchema = petSchema;
