@@ -1,21 +1,27 @@
 const z = require("zod");
 
 const appointmentSchema = z.object({
-  name: z.string().max(255),
+  name: z.string(),
   date: z.date(),
-  time: z.string().max(255),
+  time: z.string(),
   description: z.string(),
+  service: z.string(),
+  serviceOf: z.string(),
 });
 
 const stateSchema = z.object({
-  name: z.string().max(255),
+  name: z.string(),
   date: z.date(),
-  time: z.string().max(255),
+  time: z.string(),
   type: z.enum(["success", "warning", "error", "info"]),
 });
 
 const petSchema = z.object({
-  name: z.string().max(255),
+  name: z.string(),
+  type: z.string(),
+  gender: z.string(),
+  age: z.number(),
+  description: z.string(),
 });
 
 module.exports.appointmentSchema = appointmentSchema;

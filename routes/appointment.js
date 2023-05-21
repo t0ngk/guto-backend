@@ -96,6 +96,11 @@ router.delete("/:id", isLogin, isOwner, async (req, res) => {
         id: Number(id),
       },
     });
+    await db.state.deleteMany({
+      where: {
+        appointmentId: Number(id),
+      },
+    });
     return res.status(200).json({ message: "success" });
   } catch (err) {
     return res.status(500).json({ error: "internal server error" });
@@ -221,6 +226,10 @@ router.post("/new", isLogin, async (req, res) => {
 
   const petSchema = z.object({
     namePet: z.string(),
+    typePet: z.string(),
+    genderPet: z.string(),
+    agePet: z.number(),
+    descriptionPet: z.string(),
   });
 
   try {
@@ -241,6 +250,10 @@ router.post("/new", isLogin, async (req, res) => {
         Pet: {
           create: {
             name: trustDataPet.namePet,
+            type: trustDataPet.typePet,
+            gender: trustDataPet.genderPet,
+            age: trustDataPet.agePet,
+            description: trustDataPet.descriptionPet,
             User: {
               connect: {
                 id: Number(req.user.id),
@@ -248,6 +261,16 @@ router.post("/new", isLogin, async (req, res) => {
             }
           },
         },
+        state: {
+          createMany: {
+            data: [{
+              name: "ส่งคำขอจอง"
+            },
+          {
+            name : "รอการตรวจสอบ"
+          }]
+          }
+        }
       },
     });
     return res.status(200).json({ message: "success", data: appointment });

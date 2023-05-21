@@ -1,14 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../util/database");
-const { appointmentSchema } = require("../util/schema");
+const { appointmentSchema, petSchema } = require("../util/schema");
 const z = require("zod");
 const { isLogin } = require("../middlewares/user");
 const { isOwner } = require("../middlewares/pet");
-
-var petSchema = z.object({
-  name: z.string().max(255),
-});
 
 router.post("/", isLogin, async (req, res) => {
   try {
@@ -22,7 +18,7 @@ router.post("/", isLogin, async (req, res) => {
   try {
     const pet = await db.pet.create({
       data: {
-        name: trustData.name,
+        ...trustData,
         User: {
           connect: {
             id: req.user.id,
@@ -81,6 +77,11 @@ router.delete("/:id", isLogin, isOwner, async (req, res) => {
     await db.pet.delete({
       where: {
         id: Number(req.params.id),
+      },
+    });
+    await db.appointment.deleteMany({
+      where: {
+        petId: Number(req.params.id),
       },
     });
   } catch (err) {
