@@ -16,6 +16,9 @@ async function isLogin(req, res, next) {
       where: {
         id: decode.id,
       },
+      include: {
+        profileImg: true,
+      }
     });
 
     if (!user) {

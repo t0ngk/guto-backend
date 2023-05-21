@@ -210,27 +210,51 @@ router.put("/:id/role/:role", isLogin, isAdmin, async (req, res) => {
 
 //upload profile image
 router.post("/profile", isLogin, profileUpload, async (req, res) => {
-  const user = await db.user.update({
-    where: {
-      id: req.user.id,
-    },
-    data: {
-      profileImg: req.file.path,
-    },
-    select: {
-      id: true,
-      email: true,
-      fname: true,
-      lname: true,
-      phone: true,
-      address: true,
-      profileImg: true,
-    },
-  });
-  return res.status(200).json({
-    message: "profile image updated",
-    data: user,
-  });
+  console.log(req.user)
+
+  if (!req.user.profileImg) {
+    try {
+      await db.profileImg.create({
+        data: {
+          url: req.file.path,
+          User: {
+            connect: {
+              id: Number(req.user.id),
+            }
+          }
+        }
+      });
+
+      return res.status(200).json({
+        message: "profile image uploaded"
+      });
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        error: "internal server error",
+      });
+    }
+  } else {
+    try {
+      await db.profileImg.update({
+        where: {
+          id: req.user.profileImg.id,
+        },
+        data: {
+          url: req.file.path,
+        }
+      });
+
+      return res.status(200).json({
+        message: "profile image updated"
+      });
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        error: "internal server error",
+      });
+    }
+  }
 });
 
 // update user
