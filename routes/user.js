@@ -373,8 +373,11 @@ router.get("/me/appointment", isLogin, async (req, res) => {
       where: {
         Pet: {
           userId: req.user.id,
-        }
+        },
       },
+      include: {
+        state: true,
+      }
     });
 
     res.status(200).json({
@@ -398,6 +401,9 @@ router.get("/:id/appointment", isLogin, isAdmin, async (req, res) => {
           userId: Number(req.params.id),
         }
       },
+      include: {
+        state: true,
+      }
     });
 
     res.status(200).json({
